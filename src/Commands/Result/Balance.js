@@ -11,13 +11,13 @@ module.exports = {
   type: 'COMMAND',
   async run({ interaction, bot }) {
     const guild = await bot.guilds.cache.get(guildId);
-    const members = await guild.members.cache;
     const resultTestChannelId = '1003470340481101906';
     const balanceList = [];
     const sheetId = '337748561';
     const sheetName = 'balance';
     const balanceRequests = [];
     const balanceData = [];
+    const profiles = await Profile.find({});
     let startRowIndex = 1;
 
     if (interaction.channelId !== resultTestChannelId) {
@@ -33,18 +33,16 @@ module.exports = {
 
     await interaction.deferReply();
 
-    for (const member of members) {
-      const userId = member[1].user.id;
-      const profile = await Profile.find({
-        UserID: userId,
-        GuildID: guildId,
-      });
-      if (profile.length) {
+    for (const profile of profiles) {
+      const userInformation = await guild.members.cache.find(
+        (member) => member.id === profile.UserID
+      );
+      if (userInformation) {
         const value = [
-          member[1].user.username,
-          userId,
-          `${profile[0].Wallet} SBT`,
-          `${profile[0].Bank} SBT`,
+          userInformation.user.username,
+          profile.UserID,
+          `${profile.Wallet} SBT`,
+          `${profile.Bank} SBT`,
         ];
         balanceList.push(value);
       }
