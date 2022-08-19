@@ -82,7 +82,7 @@ module.exports = {
   },
   createProfile: async function createProfile(user, guild) {
     const profile = await Profile.find({ UserID: user.id, GuildID: guild.id });
-    if (!profile.length) {
+    if (profile.length === 0) {
       await new Profile({
         GuildID: guild.id,
         UserID: user.id,

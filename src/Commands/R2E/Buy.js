@@ -28,7 +28,7 @@ module.exports = {
     const userId = interaction.user.id;
     const profile = await Profile.find({ UserID: userId, GuildID: guild.id });
 
-    if (!profile.length) {
+    if (profile.length === 0) {
       await interaction.reply({
         embeds: [
           new MessageEmbed()

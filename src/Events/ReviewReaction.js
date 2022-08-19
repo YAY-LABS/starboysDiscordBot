@@ -29,7 +29,7 @@ module.exports = {
             UserID: reviewUserId,
             GuildID: guildId,
           });
-          if (!profile.length) {
+          if (profile.length === 0) {
             await createProfile(member, guild);
           }
 
