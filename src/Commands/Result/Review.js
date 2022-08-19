@@ -8,7 +8,6 @@ module.exports = {
   type: 'COMMAND',
   run: async ({ interaction, guild }) => {
     const reviewChannelId = '997434793505595492';
-    // const reviewChannelId = '1001351273309814874';
     const resultTestChannelId = '1003470340481101906';
     const channel = guild.channels.cache.get(reviewChannelId);
     const reviewMessages = new Map();
@@ -38,15 +37,15 @@ module.exports = {
         .fetch({ limit: 100, before: beforeMessageId })
         .then((page) => {
           page.forEach((message) => {
-            const contents = message.embeds[0];
+            const tweetUrl = message.content ? message.content : '';
+            const user = message.interaction?.user;
             if (
-              contents?.title === 'Review to Earn' &&
-              contents?.fields?.length === 3
+              tweetUrl.includes('https://twitter.com/') &&
+              message.embeds[0]?.fields[0]?.name?.includes('Review Rule')
             ) {
-              const userId = contents.fields[0].value;
-              const username = message.interaction?.user.username;
+              const userId = user?.id;
+              const username = user?.username;
               const goodCount = message.reactions.cache.get('👍').count;
-              const tweetUrl = contents.fields[2].value;
               if (reviewMessages.has(userId)) {
                 reviewMessages.get(userId).review.push([tweetUrl, goodCount]);
               } else {
