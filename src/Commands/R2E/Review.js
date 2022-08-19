@@ -66,27 +66,24 @@ module.exports = {
         Date.now() - profile[0].lastReview > 86400000
       ) {
         try {
-          await interaction.channel.send(tweetUrl);
           const reply = await interaction.reply({
             content: 'loading...', //`${interaction.user.id}`,
           });
-          const embed = new MessageEmbed()
-            .setTitle('Review to Earn')
-            .addField('User Id', interaction.user.id, true)
-            .addField(
-              `Review Rule <${userRoleText}>`,
-              `👍 ${reviewRewardCount}개 이상 받으면 리워드(${goodReviewReward}SBT)가 지급됩니다! (지급완료시 🎉)
-                리뷰보상 ${reviewReward}SBT 지급 완료!
-                    `,
-              true
-            )
-            .addField('Tweet URL', tweetUrl, true);
+          const embed = new MessageEmbed().addFields([
+            {
+              name: `Review Rule <${userRoleText}>`,
+              value: `👍 ${reviewRewardCount}개 이상 받으면 리워드(${goodReviewReward}SBT)가 지급됩니다! (지급완료시 🎉)
+            리뷰보상 ${reviewReward}SBT 지급 완료!
+                `,
+              inline: false,
+            },
+          ]);
           await Profile.updateOne(
             { UserID: interaction.user.id, GuildID: guild.id },
             { $inc: { Wallet: reviewReward } }
           );
           const resultMessage = await interaction.editReply({
-            content: 'review to earn!',
+            content: tweetUrl,
             embeds: [embed],
             fetchReply: true,
           });
