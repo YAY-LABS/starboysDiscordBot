@@ -297,7 +297,7 @@ module.exports = {
             UserID: e.id,
             GuildID: guild.id,
           });
-          if (!profile.length) {
+          if (profile.length === 0) {
             await createProfile(interaction.user, guild);
           }
           const users = await bot.guilds.cache.get(guild.id);
@@ -367,7 +367,7 @@ module.exports = {
           voteReward = reward.general.voteReward;
         }
         //계좌 없으면 개설
-        if (!profile.length) {
+        if (profile.length === 0) {
           await createProfile(interaction.user, guild);
         }
 

@@ -29,7 +29,7 @@ module.exports = {
 
       inputValue.splice(1, 0, userId, today, goodsNumber);
 
-      if (!profile.length) {
+      if (profile.length === 0) {
         await interaction.reply({
           embeds: [
             new MessageEmbed()

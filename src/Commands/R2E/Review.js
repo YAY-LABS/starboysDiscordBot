@@ -43,7 +43,7 @@ module.exports = {
       UserID: interaction.user.id,
       GuildID: guild.id,
     });
-    if (!profile.length) {
+    if (profile.length === 0) {
       await createProfile(interaction.user, guild);
       profile = await Profile.find({
         UserID: interaction.user.id,

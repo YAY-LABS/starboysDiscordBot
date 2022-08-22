@@ -18,7 +18,7 @@ module.exports = {
     const user = options.getUser('user') || interaction.user;
 
     const profile = await Profile.find({ UserID: user.id, GuildID: guild.id });
-    if (!profile.length) {
+    if (profile.length === 0) {
       if (user !== interaction.user)
         return interaction.reply(`${user} has no profile.`); // Prevents others from creating profiles for other users.
 
