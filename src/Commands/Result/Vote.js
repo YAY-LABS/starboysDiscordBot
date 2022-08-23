@@ -8,7 +8,7 @@ const db = low(adapter);
 module.exports = {
   name: 'vote-result',
   description: `Print vote result to google sheet`,
-  permission: 'ADMINISTRATOR',
+  permissions: 'ADMINISTRATOR',
   type: 'COMMAND',
   run: async ({ interaction }) => {
     const voteStatus = db.get('voteStatus').value();
