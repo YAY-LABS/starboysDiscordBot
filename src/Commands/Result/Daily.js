@@ -4,7 +4,7 @@ const postResultGoogleSheet = require('../../Structures/postResultGoogleSheet');
 module.exports = {
   name: 'daily-check-result',
   description: `Print user's daily check result to google sheet`,
-  permission: 'ADMINISTRATOR',
+  permissions: 'ADMINISTRATOR',
   type: 'COMMAND',
   run: async ({ interaction, guild }) => {
     // const dailyCheckChannelId = '1001799413674541096';

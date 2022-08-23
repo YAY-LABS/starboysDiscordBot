@@ -4,7 +4,7 @@ const postResultGoogleSheet = require('../../Structures/postResultGoogleSheet');
 module.exports = {
   name: 'review-result',
   description: `Print user's review result to google sheet`,
-  permission: 'ADMINISTRATOR',
+  permissions: 'ADMINISTRATOR',
   type: 'COMMAND',
   run: async ({ interaction, guild }) => {
     const reviewChannelId = '997434793505595492';

@@ -18,7 +18,7 @@ const { reward } = require('../../Config');
 
 module.exports = {
   name: 'vote',
-  description: 'NFT 투표 시작/종료!',
+  description: '투표 시작/종료!',
   options: [
     {
       name: 'option',
@@ -72,8 +72,8 @@ module.exports = {
       //isVoting: false - 정상 / true - 비정상
       if (
         isVoting &&
-        db.get('bluechipList').value()?.length > 0 &&
-        db.get('risingList').value()?.length > 0
+        db.get('firstList').value()?.length > 0 &&
+        db.get('secondList').value()?.length > 0
       ) {
         //비정상종료된 voting
         //fetch lowdb
@@ -82,7 +82,7 @@ module.exports = {
         //fetch googleSheet
         const apiKey = process.env.GOOGLE_ACCESS_TOKEN;
         const spreadsheetId = Config.google.databaseKey;
-        const sheetName = ['general', 'bluechip', 'rising'];
+        const sheetName = ['general', 'firstCandidates', 'secondCandidates'];
         try {
           const response = await request({
             method: 'GET',
@@ -114,12 +114,12 @@ module.exports = {
               Data: mask,
             }),
           });
-          const bluechipList = [];
+          const firstList = [];
           response.values.slice(1).forEach((e) => {
-            bluechipList.push({ name: e[0], id: e[1] });
+            firstList.push({ name: e[0], id: e[1] });
           });
-          db.get('bluechipList').remove().write();
-          db.get('bluechipList').assign(bluechipList).write();
+          db.get('firstList').remove().write();
+          db.get('firstList').assign(firstList).write();
         } catch (error) {
           console.error(error);
         }
@@ -133,28 +133,28 @@ module.exports = {
               Data: mask,
             }),
           });
-          const risingList = [];
+          const secondList = [];
           response.values.slice(1).forEach((e) => {
-            risingList.push({ name: e[0], id: e[1] });
+            secondList.push({ name: e[0], id: e[1] });
           });
-          db.get('risingList').remove().write();
-          db.get('risingList').assign(risingList).write();
+          db.get('secondList').remove().write();
+          db.get('secondList').assign(secondList).write();
         } catch (error) {
           console.error(error);
         }
       }
-      // const bluechipList = db.get('bluechipList').value();
-      // const risingList = db.get('risingList').value();
+      // const firstList = db.get('firstList').value();
+      // const secondList = db.get('secondList').value();
       const buttons = [
         // 각 버튼을 배열(array) 자료구조로 만들어요
         {
-          customId: 'bluechipButton',
-          label: 'Bluechip 투표하기',
+          customId: 'firstButton',
+          label: '첫번째 투표하기',
           style: 'PRIMARY',
         },
         {
-          customId: 'risingButton',
-          label: 'Rising 투표하기',
+          customId: 'secondButton',
+          label: '두번째 투표하기',
           style: 'PRIMARY',
         },
       ];
@@ -177,26 +177,14 @@ module.exports = {
         })
       );
 
-      const voteStatus = db.get('voteStatus').value();
-      const embed = new MessageEmbed().setTitle(
-        `
-        ☝️${voteStatus.voteTitle}🚀
-
-        Choose your Favorite NFT!
-        1. Bluechip
-        2. Rising
-        `
-      );
-
       // 디스코드에 출력하는 코드
       // 바로 reply 하면 타이밍 이슈떄문에 오류가 난다.
       const wait = (timeToDelay) =>
         new Promise((resolve) => setTimeout(resolve, timeToDelay)); //이와 같이 선언 후
       await wait(2000);
       await interaction.editReply({
-        content: 'NFT Vote Message',
+        content: 'Vote Message',
         components: [buttonRow],
-        embeds: [embed],
       });
     }
     ///////////////////////////////////////////////////////////////////////////
@@ -237,52 +225,50 @@ module.exports = {
       const votingData = Array.isArray(fetchVotingData)
         ? fetchVotingData
         : [fetchVotingData];
-      const bluechipCountObject = votingData.reduce((r, e) => {
-        if (e.bluechipChoice && e.bluechipChoice.length > 0) {
-          r[`${e.bluechipChoice}`] = (r[`${e.bluechipChoice}`] || 0) + 1;
+      const firstCountObject = votingData.reduce((r, e) => {
+        if (e.firstChoice && e.firstChoice.length > 0) {
+          r[`${e.firstChoice}`] = (r[`${e.firstChoice}`] || 0) + 1;
         }
         return r;
       }, {});
-      const bluechipCountArray = Object.entries(bluechipCountObject).map(
-        (e) => {
-          return { name: e[0], count: e[1] };
-        }
-      );
-      bluechipCountArray.sort((a, b) => b.count - a.count);
-
-      const risingCountObject = votingData.reduce((r, e) => {
-        if (e.risingChoice && e.risingChoice.length > 0) {
-          r[`${e.risingChoice}`] = (r[`${e.risingChoice}`] || 0) + 1;
-        }
-        return r;
-      }, {});
-      const risingCountArray = Object.entries(risingCountObject).map((e) => {
+      const firstCountArray = Object.entries(firstCountObject).map((e) => {
         return { name: e[0], count: e[1] };
       });
-      risingCountArray.sort((a, b) => b.count - a.count);
+      firstCountArray.sort((a, b) => b.count - a.count);
 
-      const bluechipRank3 = bluechipCountArray.slice(0, 3);
-      const risingRank3 = risingCountArray.slice(0, 3);
-      console.log({ voteId, bluechipRank3, risingRank3 });
+      const secondCountObject = votingData.reduce((r, e) => {
+        if (e.secondChoice && e.secondChoice.length > 0) {
+          r[`${e.secondChoice}`] = (r[`${e.secondChoice}`] || 0) + 1;
+        }
+        return r;
+      }, {});
+      const secondCountArray = Object.entries(secondCountObject).map((e) => {
+        return { name: e[0], count: e[1] };
+      });
+      secondCountArray.sort((a, b) => b.count - a.count);
+
+      const firstRank3 = firstCountArray.slice(0, 3);
+      const secondRank3 = secondCountArray.slice(0, 3);
+      console.log({ voteId, firstRank3, secondRank3 });
 
       const embed = new MessageEmbed().setTitle(
         `
         ☝️${voteStatus.voteTitle}🚀
         <RANK RESULT> 
 
-        - Bluechip RANK
-        1️⃣ : ${bluechipRank3[0]?.name}
-        2️⃣ : ${bluechipRank3[1]?.name}
-        3️⃣ : ${bluechipRank3[2]?.name}
+        - First RANK
+        1️⃣ : ${firstRank3[0]?.name}
+        2️⃣ : ${firstRank3[1]?.name}
+        3️⃣ : ${firstRank3[2]?.name}
 
-        - Rising RANK
-        1️⃣ : ${risingRank3[0]?.name}
-        2️⃣ : ${risingRank3[1]?.name}
-        3️⃣ : ${risingRank3[2]?.name}
+        - Second RANK
+        1️⃣ : ${secondRank3[0]?.name}
+        2️⃣ : ${secondRank3[1]?.name}
+        3️⃣ : ${secondRank3[2]?.name}
         `
       );
       await interaction.editReply({
-        content: 'NFT Vote Rank Result',
+        content: 'Vote Rank Result',
         embeds: [embed],
       });
 
@@ -308,26 +294,26 @@ module.exports = {
               { UserID: e.id, GuildID: guild.id },
               { $inc: { Wallet: Number(reward.holder.voteReward) } }
             );
-            if (e.bluechipChoice === bluechipRank3[0].name) {
+            if (e.firstChoice === firstRank3[0].name) {
               await Profile.updateOne(
                 { UserID: e.id, GuildID: guild.id },
                 { $inc: { Wallet: Number(reward.holder.Rank1Reward) } }
               );
             }
-            // if (e.bluechipChoice === bluechipRank3[1].name) {
+            // if (e.firstChoice === firstRank3[1].name) {
             // }
-            // if (e.bluechipChoice === bluechipRank3[2].name) {
+            // if (e.firstChoice === firstRank3[2].name) {
             // }
 
-            if (e.risingChoice === risingRank3[0].name) {
+            if (e.secondChoice === secondRank3[0].name) {
               await Profile.updateOne(
                 { UserID: e.id, GuildID: guild.id },
                 { $inc: { Wallet: Number(reward.holder.Rank1Reward) } }
               );
             }
-            // if (e.risingChoice === risingRank3[1].name) {
+            // if (e.secondChoice === secondRank3[1].name) {
             // }
-            // if (e.risingChoice === risingRank3[2].name) {
+            // if (e.secondChoice === secondRank3[2].name) {
             // }
           } else {
             await Profile.updateOne(
@@ -345,8 +331,8 @@ module.exports = {
       // 배열(buttons array)에 있는 동작을 자동으로 읽음
       if (
         interaction.isSelectMenu() &&
-        (interaction.customId === 'selectBluechip' ||
-          interaction.customId === 'selectRising')
+        (interaction.customId === 'selectFirst' ||
+          interaction.customId === 'selectSecond')
       ) {
         const voteId = db.get('voteStatus').value().voteId;
 
@@ -382,8 +368,8 @@ module.exports = {
               voteId: voteId,
               id: interaction.user.id,
               userName: interaction.user.username,
-              bluechipChoice: '',
-              risingChoice: '',
+              firstChoice: '',
+              secondChoice: '',
             })
             .write();
           await Profile.updateOne(
@@ -405,24 +391,24 @@ module.exports = {
           ephemeral: true,
         });
 
-        if (interaction.customId === 'selectBluechip') {
+        if (interaction.customId === 'selectFirst') {
           db.get('voteUser')
             .find({ id: interaction.user.id, voteId: voteId })
             .assign({
               voteId: voteId,
               id: interaction.user.id,
               userName: interaction.user.username,
-              bluechipChoice: interaction.values[0],
+              firstChoice: interaction.values[0],
             })
             .write();
-        } else if (interaction.customId === 'selectRising') {
+        } else if (interaction.customId === 'selectSecond') {
           db.get('voteUser')
             .find({ id: interaction.user.id, voteId: voteId })
             .assign({
               voteId: voteId,
               id: interaction.user.id,
               userName: interaction.user.username,
-              risingChoice: interaction.values[0],
+              secondChoice: interaction.values[0],
             })
             .write();
         }
@@ -430,15 +416,15 @@ module.exports = {
         return;
       }
       if (interaction.isButton()) {
-        if (interaction.customId === 'bluechipButton') {
-          const bluechipList = db.get('bluechipList').value();
+        if (interaction.customId === 'firstButton') {
+          const firstList = db.get('firstList').value();
 
-          const selectBluechipNFTRow = new MessageActionRow().addComponents(
+          const selectFirstRow = new MessageActionRow().addComponents(
             new MessageSelectMenu()
-              .setCustomId('selectBluechip')
-              .setPlaceholder('select Bluechip NFT')
+              .setCustomId('selectFirst')
+              // .setPlaceholder('select First vote')
               .addOptions(
-                bluechipList.map((e) => ({
+                firstList.map((e) => ({
                   label: e.name,
                   description: e.name,
                   value: e.name,
@@ -447,17 +433,17 @@ module.exports = {
           );
 
           await interaction.reply({
-            components: [selectBluechipNFTRow],
+            components: [selectFirstRow],
             ephemeral: true,
           });
-        } else if (interaction.customId === 'risingButton') {
-          const risingList = db.get('risingList').value();
-          const selectRisingNFTRow = new MessageActionRow().addComponents(
+        } else if (interaction.customId === 'secondButton') {
+          const secondList = db.get('secondList').value();
+          const selectSecondRow = new MessageActionRow().addComponents(
             new MessageSelectMenu()
-              .setCustomId('selectRising')
-              .setPlaceholder('select Rising NFT')
+              .setCustomId('selectSecond')
+              // .setPlaceholder('select Second vote')
               .addOptions(
-                risingList.map((e) => ({
+                secondList.map((e) => ({
                   label: e.name,
                   description: e.name,
                   value: e.name,
@@ -466,7 +452,7 @@ module.exports = {
               )
           );
           await interaction.reply({
-            components: [selectRisingNFTRow],
+            components: [selectSecondRow],
             ephemeral: true,
           });
         }
