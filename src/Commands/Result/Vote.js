@@ -11,8 +11,6 @@ module.exports = {
   permissions: 'ADMINISTRATOR',
   type: 'COMMAND',
   run: async ({ interaction }) => {
-    const voteStatus = db.get('voteStatus').value();
-    const voteId = voteStatus.voteId;
     const resultTestChannelId = '1003470340481101906';
     const sheetId = '234088626';
     const sheetName = 'vote';
@@ -33,6 +31,10 @@ module.exports = {
 
     await interaction.deferReply();
 
+    db.read();
+
+    const voteStatus = db.get('voteStatus').value();
+    const voteId = voteStatus.voteId;
     const fetchVotingData = db
       .get('voteUser')
       .value()
