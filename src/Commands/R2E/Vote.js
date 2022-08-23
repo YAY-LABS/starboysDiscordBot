@@ -44,6 +44,7 @@ module.exports = {
     // console.log(interaction);
     if (!interaction.isCommand()) return;
 
+    db.read();
     // filter : 버튼에 지정된 customId만 message collector가 동작할 수 있게 함
     // const filter = (i) => {
     //   return i.user.id === interaction.user.id;
