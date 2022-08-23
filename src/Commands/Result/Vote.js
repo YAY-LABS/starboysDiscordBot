@@ -40,53 +40,53 @@ module.exports = {
     const votingData = Array.isArray(fetchVotingData)
       ? fetchVotingData
       : [fetchVotingData];
-    const bluechipCountObject = votingData.reduce((r, e) => {
-      if (e.bluechipChoice && e.bluechipChoice.length > 0) {
-        r[`${e.bluechipChoice}`] = (r[`${e.bluechipChoice}`] || 0) + 1;
+    const firstCountObject = votingData.reduce((r, e) => {
+      if (e.firstChoice && e.firstChoice.length > 0) {
+        r[`${e.firstChoice}`] = (r[`${e.firstChoice}`] || 0) + 1;
       }
       return r;
     }, {});
-    const totalBluechipVoteCount = Object.entries(bluechipCountObject).reduce(
+    const totalFirstVoteCount = Object.entries(firstCountObject).reduce(
       (total, e) => (total += e[1]),
       0
     );
-    const bluechipCountArray = Object.entries(bluechipCountObject).map((e) => {
+    const firstCountArray = Object.entries(firstCountObject).map((e) => {
       return [
         e[0],
         e[1],
-        `${((e[1] / totalBluechipVoteCount) * 100).toFixed(2)}%`,
+        `${((e[1] / totalFirstVoteCount) * 100).toFixed(2)}%`,
       ];
     });
-    const risingCountObject = votingData.reduce((r, e) => {
-      if (e.risingChoice && e.risingChoice.length > 0) {
-        r[`${e.risingChoice}`] = (r[`${e.risingChoice}`] || 0) + 1;
+    const secondCountObject = votingData.reduce((r, e) => {
+      if (e.secondChoice && e.secondChoice.length > 0) {
+        r[`${e.secondChoice}`] = (r[`${e.secondChoice}`] || 0) + 1;
       }
       return r;
     }, {});
-    const totalRisingVoteCount = Object.entries(risingCountObject).reduce(
+    const totalSecondVoteCount = Object.entries(secondCountObject).reduce(
       (total, e) => (total += e[1]),
       0
     );
-    const risingCountArray = Object.entries(risingCountObject).map((e) => {
+    const secondCountArray = Object.entries(secondCountObject).map((e) => {
       return [
         e[0],
         e[1],
-        `${((e[1] / totalRisingVoteCount) * 100).toFixed(2)}%`,
+        `${((e[1] / totalSecondVoteCount) * 100).toFixed(2)}%`,
       ];
     });
     const totalParticipantCount = fetchVotingData.length;
-    const bluechipCountLength = bluechipCountArray.length;
-    const risingCountLength = risingCountArray.length;
+    const firstCountLength = firstCountArray.length;
+    const secondCountLength = secondCountArray.length;
 
-    const maxLength = Math.max(bluechipCountLength, risingCountLength);
+    const maxLength = Math.max(firstCountLength, secondCountLength);
 
     voteData.push({
-      range: `${sheetName}!A${startRowIndex + 1}:C${bluechipCountLength + 1}`,
-      values: bluechipCountArray,
+      range: `${sheetName}!A${startRowIndex + 1}:C${firstCountLength + 1}`,
+      values: firstCountArray,
     });
     voteData.push({
-      range: `${sheetName}!D${startRowIndex + 1}:F${risingCountLength + 1}`,
-      values: risingCountArray,
+      range: `${sheetName}!D${startRowIndex + 1}:F${secondCountLength + 1}`,
+      values: secondCountArray,
     });
 
     voteRequests.push({
@@ -117,7 +117,7 @@ module.exports = {
     voteData.push({
       range: `${sheetName}!A${maxLength + 2}:E${maxLength + 4}`,
       values: [
-        ['Total', totalBluechipVoteCount, '', '', totalRisingVoteCount],
+        ['Total', totalFirstVoteCount, '', '', totalSecondVoteCount],
         ['Total Participant', totalParticipantCount, '', '', ''],
       ],
     });

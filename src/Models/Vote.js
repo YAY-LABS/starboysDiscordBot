@@ -3,10 +3,10 @@ module.exports = model(
   'Vote',
   new Schema({
     VoteID: Number, //ADMIN
-    BluchipList: [String],
-    RisingList: [String],
-    BluechipWinnerList: [Number],
-    RisingWinnerList: [Number],
+    FirstList: [String],
+    SecondList: [String],
+    FirstWinnerList: [Number],
+    SecondWinnerList: [Number],
     StartDate: Date,
     EndDate: Date,
   })

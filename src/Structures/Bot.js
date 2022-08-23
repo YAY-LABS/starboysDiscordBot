@@ -17,8 +17,8 @@ module.exports = class Bot extends Client {
     this.logger = consola;
     db.defaults({
       voteStatus: { isVoting: false, voteId: 0, voteTitle: '' },
-      bluechipList: [],
-      risingList: [],
+      firstList: [],
+      secondList: [],
       voteUser: [],
     }).write();
   }
