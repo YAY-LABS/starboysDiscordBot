@@ -100,6 +100,7 @@ module.exports = {
   },
   createOrder: async function createOrder(guildId, orderInformation) {
     await new Order({
+      OrderID: orderInformation[3],
       GuildID: guildId,
       UserID: orderInformation[1],
       UserName: orderInformation[0],
