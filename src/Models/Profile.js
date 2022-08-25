@@ -3,7 +3,7 @@ module.exports = model(
   'Profile',
   new Schema({
     GuildID: String,
-    UserID: String,
+    UserID: { type: String, unique: true },
     Wallet: Number,
     Bank: Number,
     lastDaily: Date,
