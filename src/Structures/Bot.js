@@ -9,8 +9,6 @@ const FileSync = require('lowdb/adapters/FileSync');
 const adapter = new FileSync('db.json');
 const db = low(adapter);
 
-const { REST } = require('@discordjs/rest');
-
 module.exports = class Bot extends Client {
   constructor(config) {
     super(config.botOptions);
@@ -32,12 +30,6 @@ module.exports = class Bot extends Client {
 
     if (Config.guildOnly.enabled == true && Config.guildOnly.guildID != '') {
       try {
-        const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
-        rest
-          .put(Routes.applicationCommands('991549979908915270'), { body: [] })
-          .then(() => console.log('Successfully deleted all guild commands.'))
-          .catch(console.error);
-
         const guild = this.guilds.cache.get(Config.guildOnly.guildID);
         await guild.commands.set(this.commands);
         this.logger.info(
