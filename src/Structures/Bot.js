@@ -31,6 +31,7 @@ module.exports = class Bot extends Client {
     if (Config.guildOnly.enabled == true && Config.guildOnly.guildID != '') {
       try {
         const guild = this.guilds.cache.get(Config.guildOnly.guildID);
+        await guild.commands.set([]);
         await guild.commands.set(this.commands);
         this.logger.info(
           `Commands registered in guild with ID ${Config.guildOnly.guildID}`
