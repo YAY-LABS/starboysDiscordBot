@@ -34,13 +34,7 @@ module.exports = class Bot extends Client {
       try {
         const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
         rest
-          .put(
-            Routes.applicationGuildCommands(
-              '991549979908915270',
-              Config.guildOnly.guildID
-            ),
-            { body: [] }
-          )
+          .put(Routes.applicationCommands('991549979908915270'), { body: [] })
           .then(() => console.log('Successfully deleted all guild commands.'))
           .catch(console.error);
 
