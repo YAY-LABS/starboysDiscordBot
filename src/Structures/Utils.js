@@ -17,6 +17,7 @@ module.exports = {
         Math.floor(Math.random() * randomChars.length)
       );
     }
+
     return result;
   },
   search: promisify(glob),
@@ -119,6 +120,7 @@ module.exports = {
       Size: goods.size,
       Price: goods.price,
       IsSoldout: goods.isSoldout,
+      Count: goods.count,
     }).save();
     return true;
   },

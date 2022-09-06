@@ -40,7 +40,7 @@ module.exports = {
         return;
       }
 
-      if (goods[0].IsSoldout) {
+      if (goods[0].Count === 0) {
         await interaction.reply({
           embeds: [
             new MessageEmbed()
@@ -53,7 +53,7 @@ module.exports = {
         return;
       }
 
-      await Goods.updateOne({ GoodsID: goodsNumber }, { IsSoldout: true });
+      await Goods.updateOne({ GoodsID: goodsNumber }, { $inc: { Count: -1 } });
       await createOrder(guild.id, inputValue);
       inputValue.splice(2, 1, today.toISOString().slice(0, 10));
       await postOrderGoogleSheet(`${sheetName}!${cellRange}`, inputValue);

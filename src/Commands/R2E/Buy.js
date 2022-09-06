@@ -46,7 +46,7 @@ module.exports = {
             ),
         ],
       });
-    } else if (goods[0].IsSoldout) {
+    } else if (goods[0].Count === 0) {
       await interaction.reply({
         embeds: [
           new MessageEmbed()
