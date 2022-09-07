@@ -17,8 +17,10 @@ module.exports = {
     const sheetName = 'balance';
     const balanceRequests = [];
     const balanceData = [];
-    const profiles = await Profile.find({});
+    const profiles = await Profile.find({ GuildID: guild.id });
     let startRowIndex = 1;
+    let totalWalletBalance = 0,
+      totalBankBalance = 0;
 
     if (interaction.channelId !== resultTestChannelId) {
       await interaction.reply({
@@ -38,11 +40,13 @@ module.exports = {
         (member) => member.id === profile.UserID
       );
       if (userInformation) {
+        totalWalletBalance += profile.Wallet;
+        totalBankBalance += profile.Bank;
         const value = [
           userInformation.user.username,
           profile.UserID,
-          `${profile.Wallet} SBT`,
-          `${profile.Bank} SBT`,
+          `${profile.Wallet}`,
+          `${profile.Bank}`,
         ];
         balanceList.push(value);
       }
@@ -56,7 +60,7 @@ module.exports = {
 
     balanceData.push({
       range: `${sheetName}!A${balanceLength + 2}:D${balanceLength + 3}`,
-      values: [['Total', balanceLength, '', '']],
+      values: [['Total', balanceLength, totalWalletBalance, totalBankBalance]],
     });
 
     balanceRequests.push({
