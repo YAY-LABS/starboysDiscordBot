@@ -12,25 +12,32 @@ module.exports = {
   async run(bot, interaction) {
     if (!interaction.customId) return;
 
+    await interaction.reply('order loading...');
+
     if (interaction.customId.includes('orderInformation')) {
       const guild = await bot.guilds.cache.get(guildId);
       const userId = interaction.user.id;
-      const today = getCurrentKoreanDate();
+      const today = new Date();
       const inputValue = [];
       const [goodsNumber, goodsPrice] = interaction.customId.match(/\d+/g);
       const sheetName = 'order';
       const profile = await Profile.find({ UserID: userId, GuildID: guild.id });
+      const userInformation = await guild.members.cache.find(
+        (member) => member.id === userId
+      );
       const goods = await Goods.find({ GoodsID: goodsNumber });
       interaction.components.map((component) => {
         const componentProperty = component.components[0];
         inputValue.push(componentProperty.value);
       });
-      const cellRange = inputValue.length === 3 ? 'A:F' : 'A:G';
+      const cellRange = inputValue.length === 3 ? 'A:G' : 'A:H';
 
-      inputValue.splice(1, 0, userId, today, goodsNumber);
+      inputValue.unshift(userInformation.user.username);
+      inputValue.splice(2, 0, userId, today, goodsNumber);
 
       if (profile.length === 0) {
-        await interaction.reply({
+        await interaction.editReply({
+          content: 'order failed',
           embeds: [
             new MessageEmbed()
               .setColor('RED')
@@ -40,8 +47,9 @@ module.exports = {
         return;
       }
 
-      if (goods[0].IsSoldout) {
-        await interaction.reply({
+      if (goods[0].Count === 0) {
+        await interaction.editReply({
+          content: 'order failed',
           embeds: [
             new MessageEmbed()
               .setColor('RED')
@@ -53,15 +61,16 @@ module.exports = {
         return;
       }
 
-      await Goods.updateOne({ GoodsID: goodsNumber }, { IsSoldout: true });
+      await Goods.updateOne({ GoodsID: goodsNumber }, { $inc: { Count: -1 } });
       await createOrder(guild.id, inputValue);
-      inputValue.splice(2, 1, today.toISOString().slice(0, 10));
+      inputValue.splice(3, 1, today.toISOString().slice(0, 10));
       await postOrderGoogleSheet(`${sheetName}!${cellRange}`, inputValue);
       await Profile.updateOne(
         { UserID: userId, GuildID: guild.id },
         { $inc: { Wallet: -goodsPrice } }
       );
-      await interaction.reply({
+      await interaction.editReply({
+        content: 'order success',
         embeds: [
           new MessageEmbed()
             .setColor('BLURPLE')

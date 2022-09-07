@@ -46,7 +46,7 @@ module.exports = {
             ),
         ],
       });
-    } else if (goods[0].IsSoldout) {
+    } else if (goods[0].Count === 0) {
       await interaction.reply({
         embeds: [
           new MessageEmbed()
@@ -69,7 +69,7 @@ module.exports = {
         .setCustomId(`NameInput`)
         .setLabel(`What's your name?`)
         .setStyle(1)
-        .setMaxLength(5)
+        .setMaxLength(20)
         .setRequired(true);
 
       const addressInput = new TextInputComponent()
@@ -82,7 +82,7 @@ module.exports = {
         .setCustomId('phoneNumberInput')
         .setLabel(`What's your phone number?`)
         .setStyle(1)
-        .setMaxLength(12)
+        .setMaxLength(20)
         .setRequired(true);
       const nameActionRow = new MessageActionRow().addComponents(nameInput);
       const addressActionRow = new MessageActionRow().addComponents(

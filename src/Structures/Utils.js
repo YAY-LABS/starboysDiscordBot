@@ -17,6 +17,7 @@ module.exports = {
         Math.floor(Math.random() * randomChars.length)
       );
     }
+
     return result;
   },
   search: promisify(glob),
@@ -101,13 +102,14 @@ module.exports = {
   createOrder: async function createOrder(guildId, orderInformation) {
     await new Order({
       GuildID: guildId,
-      UserID: orderInformation[1],
-      UserName: orderInformation[0],
-      Address: orderInformation[4],
-      Phone: orderInformation[5],
-      Size: orderInformation[6],
-      GoodsNumber: orderInformation[3],
-      OrderDate: orderInformation[2],
+      UserID: orderInformation[2],
+      UserNickName: orderInformation[0],
+      UserName: orderInformation[1],
+      Address: orderInformation[5],
+      Phone: orderInformation[6],
+      Size: orderInformation[7],
+      GoodsNumber: orderInformation[4],
+      OrderDate: orderInformation[3],
     }).save();
     return true;
   },
@@ -119,6 +121,7 @@ module.exports = {
       Size: goods.size,
       Price: goods.price,
       IsSoldout: goods.isSoldout,
+      Count: goods.count,
     }).save();
     return true;
   },

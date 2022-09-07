@@ -8,5 +8,6 @@ module.exports = model(
     Size: [String],
     Price: Number,
     IsSoldout: Boolean,
+    Count: Number,
   })
 );
