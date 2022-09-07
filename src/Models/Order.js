@@ -4,6 +4,7 @@ const AutoIncrement = require('mongoose-sequence')(mongoose);
 const schema = new mongoose.Schema({
   GuildID: String,
   UserID: String,
+  UserNickName: String,
   UserName: String,
   Address: String,
   Phone: String,
