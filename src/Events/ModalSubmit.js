@@ -12,9 +12,9 @@ module.exports = {
   async run(bot, interaction) {
     if (!interaction.customId) return;
 
-    await interaction.reply('order loading...');
-
     if (interaction.customId.includes('orderInformation')) {
+      await interaction.reply('order loading...');
+
       const guild = await bot.guilds.cache.get(guildId);
       const userId = interaction.user.id;
       const today = new Date();
